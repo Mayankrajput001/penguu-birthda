@@ -15918,7 +15918,7 @@ function Step3Memories({ onNextStep, onPrevStep }) {
   const memoryPhotos = [
     {
       id: 1,
-      url: "/images/pengu1.jpeg",
+      url: "./images/pengu1.jpeg",
       // File 1: Starry blanket
       title: "Guarding My Little Penguu 🛡️💖",
       subtitle: "You are always safe, protected & deeply cared for with me! 😌🫂",
@@ -15929,7 +15929,7 @@ function Step3Memories({ onNextStep, onPrevStep }) {
     },
     {
       id: 2,
-      url: "/images/pengu2.jpeg",
+      url: "./images/pengu2.jpeg",
       // File 2: Selfie with round glasses
       title: "Prettiest Smile 💖",
       subtitle: "That warm, soft smile with round glasses!",
@@ -15940,7 +15940,7 @@ function Step3Memories({ onNextStep, onPrevStep }) {
     },
     {
       id: 3,
-      url: "/images/pengu3.jpeg",
+      url: "./images/pengu3.jpeg",
       // File 3: Baby photo with top ponytail
       title: "Baby Penguu 🥹",
       subtitle: "Where it all started—cutest top ponytail ever!",
@@ -15951,7 +15951,7 @@ function Step3Memories({ onNextStep, onPrevStep }) {
     },
     {
       id: 4,
-      url: "/images/pengu4.jpeg",
+      url: "./images/pengu4.jpeg",
       // File 4: Couple mirror selfie
       title: "Together Forever ♾️❤️",
       subtitle: "You’re stuck with me forever & always! 😌🫂",
