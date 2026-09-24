@@ -4,10 +4,10 @@ import { Sparkles, ChevronRight, ChevronLeft, Heart, ZoomIn, Grid, BookOpen, X }
 import confetti from "canvas-confetti";
 import { sounds } from "../utils/soundEffects";
 
-import orig_pengu1 from "../assets/orig_pengu1.jpg";
-import orig_pengu2 from "../assets/orig_pengu2.jpg";
-import orig_pengu3 from "../assets/orig_pengu3.jpg";
-import orig_pengu4 from "../assets/orig_pengu4.jpg";
+import web1_photo1 from "../assets/web1_photo1.jpg";
+import web1_photo2 from "../assets/web1_photo2.jpg";
+import web1_photo3 from "../assets/web1_photo3.jpg";
+import web1_photo4 from "../assets/web1_photo4.jpg";
 
 export default function Step3Memories({ onNextStep, onPrevStep }) {
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(null);
@@ -19,7 +19,7 @@ export default function Step3Memories({ onNextStep, onPrevStep }) {
   const memoryPhotos = [
     {
       id: 1,
-      url: orig_pengu1,
+      url: web1_photo1,
       title: "Our Mirror Selfie Together 🤳💖",
       subtitle: "Side by side, looking so cute and stylish!",
       dateTag: "Safe & Sound 🛡️",
@@ -29,7 +29,7 @@ export default function Step3Memories({ onNextStep, onPrevStep }) {
     },
     {
       id: 2,
-      url: orig_pengu2,
+      url: web1_photo2,
       title: "Baby Penguu 🥹",
       subtitle: "Where it all started—cutest top ponytail ever!",
       dateTag: "Baby Era 🌸",
@@ -39,7 +39,7 @@ export default function Step3Memories({ onNextStep, onPrevStep }) {
     },
     {
       id: 3,
-      url: orig_pengu3,
+      url: web1_photo3,
       title: "Prettiest Sunshine Smile 🌸",
       subtitle: "Soft aesthetic portrait that steals my heart!",
       dateTag: "Pure Sunshine ☀️",
@@ -49,7 +49,7 @@ export default function Step3Memories({ onNextStep, onPrevStep }) {
     },
     {
       id: 4,
-      url: orig_pengu4,
+      url: web1_photo4,
       title: "Together Forever ♾️❤️",
       subtitle: "You’re stuck with me forever & always! 😌🫂",
       dateTag: "Best Duo ♾️",
