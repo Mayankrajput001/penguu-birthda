@@ -1,287 +1,260 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, ChevronRight, ChevronLeft, Heart, ZoomIn, Grid, BookOpen, X } from 'lucide-react';
-import confetti from 'canvas-confetti';
-import { sounds } from '../utils/soundEffects';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Sparkles, ChevronRight, ChevronLeft, Heart, ZoomIn, Grid, BookOpen, X } from "lucide-react";
+import confetti from "canvas-confetti";
+import { sounds } from "../utils/soundEffects";
+
+import orig_pengu1 from "../assets/orig_pengu1.jpg";
+import orig_pengu2 from "../assets/orig_pengu2.jpg";
+import orig_pengu3 from "../assets/orig_pengu3.jpg";
+import orig_pengu4 from "../assets/orig_pengu4.jpg";
 
 export default function Step3Memories({ onNextStep, onPrevStep }) {
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(null);
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'slideshow'
+  const [viewMode, setViewMode] = useState("grid");
   const [activeSlide, setActiveSlide] = useState(0);
   const [heartCounts, setHeartCounts] = useState({ 0: 12, 1: 18, 2: 15, 3: 25 });
   const [floatingHearts, setFloatingHearts] = useState([]);
 
-  // 100% Exact order where File 1 = Card 1, File 2 = Card 2, File 3 = Card 3, File 4 = Card 4
   const memoryPhotos = [
     {
       id: 1,
-      url: '/images/pengu1.jpeg', // File 1: Starry blanket
-      title: 'Guarding My Little Penguu 🛡️💖',
-      subtitle: 'You are always safe, protected & deeply cared for with me! 😌🫂',
-      dateTag: 'Safe & Sound 🛡️',
-      badge: 'Always Protected',
-      note: 'Wrapped up in warmth, safe and sound! No matter what happens in the world, you will always be safe, protected, and deeply cared for with me. I’ll always guard my cute little Penguu, be your safe haven, and stay by your side forever! 🛡️✨',
-      sweetQuote: 'With me, my little Penguu is always safe, cherished, and protected. 💖'
+      url: orig_pengu1,
+      title: "Our Mirror Selfie Together 🤳💖",
+      subtitle: "Side by side, looking so cute and stylish!",
+      dateTag: "Safe & Sound 🛡️",
+      badge: "Always Together",
+      note: "Standing together in front of the mirror, looking so handsome and cute! No matter where we are, having you right beside me makes every day brighter and happier.",
+      sweetQuote: "With me, my little Penguu is always safe, cherished, and protected. 💖"
     },
     {
       id: 2,
-      url: '/images/pengu2.jpeg', // File 2: Selfie with round glasses
-      title: 'Prettiest Smile 💖',
-      subtitle: 'That warm, soft smile with round glasses!',
-      dateTag: 'Pure Sunshine ☀️',
-      badge: 'Cute Glasses',
-      note: 'That gentle, radiant smile with your cute round glasses! Every time I look at this photo, my whole day instantly brightens up. You are officially the prettiest and sweetest girl in the universe! 🥰',
-      sweetQuote: 'Your smile is my favorite view in the whole wide world.'
+      url: orig_pengu2,
+      title: "Baby Penguu 🥹",
+      subtitle: "Where it all started—cutest top ponytail ever!",
+      dateTag: "Baby Era 🌸",
+      badge: "Cutest Ponytail",
+      note: "Look at that adorable little top ponytail and those big curious eyes! You were 1000% cuteness overload even back then. Some people are just born with magic in their eyes... and you definitely were! 💖",
+      sweetQuote: "Little Penguu, big dreams, and infinite cuteness! ✨"
     },
     {
       id: 3,
-      url: '/images/pengu3.jpeg', // File 3: Baby photo with top ponytail
-      title: 'Baby Penguu 🥹',
-      subtitle: 'Where it all started—cutest top ponytail ever!',
-      dateTag: 'Baby Era 🌸',
-      badge: 'Cutest Ponytail',
-      note: 'Look at that adorable little top ponytail and those big curious eyes! You were 1000% cuteness overload even back then. Some people are just born with magic in their eyes... and you definitely were! 💖',
-      sweetQuote: 'Little Penguu, big dreams, and infinite cuteness! ✨'
+      url: orig_pengu3,
+      title: "Prettiest Sunshine Smile 🌸",
+      subtitle: "Soft aesthetic portrait that steals my heart!",
+      dateTag: "Pure Sunshine ☀️",
+      badge: "Angel Vibes",
+      note: "Your soft hair, gentle smile, and effortless grace—everything about this picture is just so breathtaking. You don’t even have to try... you are naturally the prettiest girl in the universe! 🥰",
+      sweetQuote: "Your smile is my favorite view in the whole wide world."
     },
     {
       id: 4,
-      url: '/images/pengu4.jpeg', // File 4: Couple mirror selfie
-      title: 'Together Forever ♾️❤️',
-      subtitle: 'You’re stuck with me forever & always! 😌🫂',
-      dateTag: 'Best Duo Ever 🫂',
-      badge: 'Mirror Selfie',
-      note: 'The ultimate duo! You’re stuck with me forever and ever whether you like it or not. Thank you for being my constant, my comfort, my favorite person, and my best friend! 😌🫂',
-      sweetQuote: 'Side by side, today, tomorrow, and forever.'
+      url: orig_pengu4,
+      title: "Together Forever ♾️❤️",
+      subtitle: "You’re stuck with me forever & always! 😌🫂",
+      dateTag: "Best Duo ♾️",
+      badge: "Matchy Matchy",
+      note: "Matching in style and smiling together! Thank you for being the sweetest, kindest, and most amazing partner. You’re stuck with me forever and ever, my cute Penguu! 🥂",
+      sweetQuote: "Side by side, today, tomorrow, and for all our birthdays to come. ♾️❤️"
     }
   ];
 
-  // Handle heart reactions on cards
-  const handleAddHeart = (index, e) => {
+  const handleAddHeart = (idx, e) => {
     e.stopPropagation();
     sounds.playPop();
-    setHeartCounts(prev => ({ ...prev, [index]: (prev[index] || 0) + 1 }));
 
-    // Spawn floating heart
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top;
+
     const newHeart = {
       id: Date.now() + Math.random(),
-      x: e.clientX || window.innerWidth / 2,
-      y: e.clientY || window.innerHeight / 2
+      x,
+      y
     };
-    setFloatingHearts(prev => [...prev.slice(-15), newHeart]);
-  };
 
-  // Keyboard navigation for lightbox
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (selectedPhotoIndex === null) return;
-      if (e.key === 'ArrowRight') {
-        setSelectedPhotoIndex((prev) => (prev + 1) % memoryPhotos.length);
-        sounds.playPop();
-      } else if (e.key === 'ArrowLeft') {
-        setSelectedPhotoIndex((prev) => (prev - 1 + memoryPhotos.length) % memoryPhotos.length);
-        sounds.playPop();
-      } else if (e.key === 'Escape') {
-        setSelectedPhotoIndex(null);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedPhotoIndex]);
+    setFloatingHearts((prev) => [...prev, newHeart]);
+    setHeartCounts((prev) => ({
+      ...prev,
+      [idx]: (prev[idx] || 0) + 1
+    }));
+
+    setTimeout(() => {
+      setFloatingHearts((prev) => prev.filter((h) => h.id !== newHeart.id));
+    }, 1200);
+  };
 
   const selectedPhoto = selectedPhotoIndex !== null ? memoryPhotos[selectedPhotoIndex] : null;
 
   return (
-    <div className="flex flex-col items-center justify-center py-4 px-3 sm:px-4 max-w-4xl mx-auto text-center relative min-h-[75vh] w-full">
+    <div className="flex flex-col items-center justify-center py-2 sm:py-4 px-3 sm:px-4 max-w-4xl mx-auto text-center min-h-[78vh] sm:min-h-[82vh] w-full relative">
       
-      {/* Floating Reaction Hearts */}
-      {floatingHearts.map((h) => (
-        <motion.div
-          key={h.id}
-          initial={{ opacity: 1, x: h.x - 12, y: h.y - 20, scale: 0.8 }}
-          animate={{ opacity: 0, y: h.y - 120, x: h.x + (Math.random() * 40 - 20), scale: 1.6 }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
-          className="fixed pointer-events-none text-xl sm:text-2xl z-50"
-        >
-          💖
-        </motion.div>
-      ))}
+      {/* Floating Hearts Animation Container */}
+      <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
+        {floatingHearts.map((h) => (
+          <motion.div
+            key={h.id}
+            initial={{ opacity: 1, y: h.y, x: h.x - 12, scale: 0.8 }}
+            animate={{ opacity: 0, y: h.y - 120, scale: 1.4, x: h.x - 12 + (Math.random() * 40 - 20) }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
+            className="absolute text-rose-500 text-xl font-bold"
+          >
+            💖
+          </motion.div>
+        ))}
+      </div>
 
       {/* Header Badge */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 sm:px-3.5 sm:py-1 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-300 text-[11px] sm:text-xs font-semibold mb-2.5 sm:mb-3 shadow-sm"
+        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-300 text-[11px] sm:text-xs font-bold mb-3 shadow-sm"
       >
-        <Sparkles size={13} className="text-pink-400 animate-spin shrink-0" />
-        <span>Step 3 of 4: Our Favorite Memories 📸</span>
+        <Sparkles size={13} className="text-pink-400 shrink-0" />
+        <span>Step 3 of 5: Birthday Memories Scrapbook 📸</span>
       </motion.div>
 
-      <h2 className="text-xl sm:text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-300 via-rose-200 to-purple-300 mb-1">
-        Memories With My Penguu 💖
+      {/* Section Title */}
+      <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-pink-300 via-rose-200 to-amber-200 mb-1 leading-tight">
+        Precious Birthday Memories 💖
       </h2>
-      <p className="text-[11px] sm:text-xs md:text-sm text-pink-200/80 mb-3 sm:mb-4 max-w-md">
-        Four special snapshots. Tap any photo to enlarge and read secret memory notes!
+      <p className="text-xs sm:text-sm text-pink-200/90 max-w-xl mb-4 leading-relaxed">
+        Tap any memory card to view full resolution and read the story written for it! 📸✨
       </p>
 
-      {/* VIEW MODE TOGGLE (Grid vs Slideshow) */}
-      <div className="flex items-center justify-center gap-2 bg-slate-800/80 p-1 rounded-full border border-white/10 mb-3 sm:mb-4">
-        <button
-          onClick={() => {
-            sounds.playPop();
-            setViewMode('grid');
-          }}
-          className={`flex items-center gap-1.5 px-3 py-1 sm:px-3.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-semibold transition-all ${
-            viewMode === 'grid'
-              ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md'
-              : 'text-slate-400 hover:text-slate-200'
-          }`}
-        >
-          <Grid size={13} />
-          <span>Polaroid Grid</span>
-        </button>
+      {/* View Mode Selector Bar */}
+      <div className="flex items-center justify-between w-full max-w-3xl mb-4 px-2">
+        <span className="text-xs font-bold text-pink-200 flex items-center gap-1.5">
+          <span>Our Photo Gallery 🖼️</span>
+        </span>
 
-        <button
-          onClick={() => {
-            sounds.playPop();
-            setViewMode('slideshow');
-          }}
-          className={`flex items-center gap-1.5 px-3 py-1 sm:px-3.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-semibold transition-all ${
-            viewMode === 'slideshow'
-              ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md'
-              : 'text-slate-400 hover:text-slate-200'
-          }`}
-        >
-          <BookOpen size={13} />
-          <span>Memory Book</span>
-        </button>
+        <div className="flex items-center gap-1 bg-slate-900/90 p-1 rounded-full border border-pink-500/20">
+          <button
+            onClick={() => {
+              sounds.playPop();
+              setViewMode("grid");
+            }}
+            className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold transition-all ${
+              viewMode === "grid"
+                ? "bg-pink-500 text-white shadow-md"
+                : "text-slate-400 hover:text-white"
+            }`}
+          >
+            <Grid size={13} />
+            <span>Grid</span>
+          </button>
+          <button
+            onClick={() => {
+              sounds.playPop();
+              setViewMode("slideshow");
+            }}
+            className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold transition-all ${
+              viewMode === "slideshow"
+                ? "bg-pink-500 text-white shadow-md"
+                : "text-slate-400 hover:text-white"
+            }`}
+          >
+            <BookOpen size={13} />
+            <span>Slideshow</span>
+          </button>
+        </div>
       </div>
 
-      {/* MODE 1: COMPACT 4 POLAROID CARDS GRID (1 col on mobile, 2 cols on small tablet, 4 cols on desktop) */}
-      {viewMode === 'grid' && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 w-full my-1">
-          {memoryPhotos.map((item, idx) => {
-            return (
-              <div
-                key={item.id}
-                onClick={() => {
-                  sounds.playPop();
-                  setSelectedPhotoIndex(idx);
-                }}
-                className="relative bg-slate-100 p-2.5 rounded-2xl shadow-md border border-white cursor-pointer group text-slate-800 transition-transform duration-200 hover:-translate-y-1 flex flex-col justify-between"
-              >
-                {/* Tape Accent */}
-                <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 w-14 h-4 bg-pink-300/80 border border-white/60 rotate-[-2deg] rounded-sm z-20 pointer-events-none shadow-xs flex items-center justify-center">
-                  <span className="text-[9px] font-bold text-pink-800 uppercase tracking-tighter">PENGUU</span>
-                </div>
-
-                {/* Compact Clean Photo Box */}
-                <div className="relative w-full h-36 sm:h-40 md:h-44 rounded-xl bg-slate-900/5 border border-slate-200 mb-2 overflow-hidden flex items-center justify-center p-1">
+      {/* GRID VIEW MODE */}
+      {viewMode === "grid" && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 w-full mb-6">
+          {memoryPhotos.map((photo, idx) => (
+            <motion.div
+              key={photo.id}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.1 }}
+              whileHover={{ y: -4, scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => {
+                sounds.playSparkle();
+                setSelectedPhotoIndex(idx);
+              }}
+              className="cursor-pointer group select-none flex flex-col"
+            >
+              <div className="bg-slate-900/90 border-2 border-pink-500/30 hover:border-pink-400/80 rounded-2xl p-3 shadow-xl flex flex-col justify-between h-full transition-all">
+                {/* Photo Container: Natural Aspect Ratio, Zero Cropping */}
+                <div className="relative w-full bg-slate-950 rounded-xl overflow-hidden border border-white/10 flex items-center justify-center p-1 min-h-[220px]">
                   <img
-                    src={item.url}
-                    alt={item.title}
-                    className="max-h-full max-w-full object-contain rounded-md shadow-xs"
+                    src={photo.url}
+                    alt={photo.title}
+                    className="w-full h-auto max-h-[340px] object-contain rounded-lg group-hover:scale-102 transition-transform duration-300"
                   />
-
-                  {/* Hover Overlay */}
-                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
-                    <div className="px-2 py-1 rounded-full bg-white/90 text-slate-900 text-[10px] font-bold flex items-center gap-1 shadow-sm">
-                      <ZoomIn size={12} />
-                      <span>Tap to Open 💌</span>
-                    </div>
-                  </div>
-
-                  {/* Memory Index Pill */}
-                  <div className="absolute top-1.5 right-1.5 z-10 px-1.5 py-0.5 rounded-full bg-slate-900/80 text-[9px] text-pink-200 font-bold flex items-center gap-1">
-                    <Heart size={9} className="fill-pink-400 text-pink-400" />
-                    <span>#{idx + 1}</span>
-                  </div>
+                  <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-black/75 text-[10px] font-bold text-pink-300 border border-pink-500/30 backdrop-blur-sm">
+                    {photo.badge}
+                  </span>
                 </div>
 
-                {/* Polaroid Caption & Details */}
-                <div className="text-left px-0.5 flex-1 flex flex-col justify-between">
-                  <div>
-                    <h3 className="font-bold text-xs md:text-sm text-slate-800 truncate mb-0.5">
-                      {item.title}
+                {/* Info & Heart Button */}
+                <div className="pt-3 text-left flex flex-col gap-1.5">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-bold text-xs sm:text-sm text-pink-100 line-clamp-1">
+                      {photo.title}
                     </h3>
-                    <p className="text-[11px] text-slate-600 font-handwriting text-xs sm:text-sm font-semibold leading-tight line-clamp-2">
-                      "{item.subtitle}"
-                    </p>
-                  </div>
-
-                  {/* Interactive Heart Counter Row */}
-                  <div className="pt-2 mt-1 border-t border-slate-200 flex items-center justify-between text-[11px]">
-                    <span className="text-[10px] text-pink-600 font-medium">Click to open 💖</span>
                     <button
                       onClick={(e) => handleAddHeart(idx, e)}
-                      className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-pink-50 hover:bg-pink-100 text-pink-600 font-bold transition-colors"
-                      title="Send love"
+                      className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 font-bold border border-rose-500/30 text-[11px] shrink-0"
                     >
-                      <Heart size={11} className="fill-pink-500 text-pink-500 animate-pulse" />
+                      <Heart size={11} className="fill-rose-500 text-rose-500" />
                       <span>{heartCounts[idx] || 0}</span>
                     </button>
                   </div>
+
+                  <p className="text-[11px] text-pink-300/70 line-clamp-1">
+                    {photo.subtitle}
+                  </p>
+
+                  <div className="w-full py-1.5 rounded-lg bg-pink-500/20 hover:bg-pink-500/30 border border-pink-500/30 text-pink-200 text-[11px] font-bold flex items-center justify-center gap-1 transition-colors mt-1">
+                    <ZoomIn size={12} />
+                    <span>Read Story 💌</span>
+                  </div>
                 </div>
               </div>
-            );
-          })}
+            </motion.div>
+          ))}
         </div>
       )}
 
-      {/* MODE 2: SLIDESHOW / MEMORY BOOK VIEW */}
-      {viewMode === 'slideshow' && (
-        <div className="w-full max-w-2xl my-1">
+      {/* SLIDESHOW VIEW MODE */}
+      {viewMode === "slideshow" && (
+        <div className="w-full max-w-2xl mx-auto mb-6">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeSlide}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.3 }}
-              className="bg-slate-900/90 border border-pink-500/30 rounded-3xl p-3.5 sm:p-4 shadow-2xl flex flex-col md:flex-row items-center gap-3 sm:gap-4"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="bg-slate-900 border-2 border-pink-500/40 rounded-3xl p-4 sm:p-6 shadow-2xl text-left relative"
             >
-              {/* Photo Display Frame (Uncropped full photo) */}
-              <div className="relative w-full md:w-1/2 h-48 sm:h-56 md:h-64 rounded-2xl overflow-hidden bg-slate-950 flex items-center justify-center border border-white/10 shrink-0 p-2">
+              <div className="relative w-full h-[32vh] sm:h-[40vh] max-h-[360px] rounded-2xl overflow-hidden bg-slate-950 flex items-center justify-center border border-white/10 mb-4 p-2">
                 <img
                   src={memoryPhotos[activeSlide].url}
                   alt={memoryPhotos[activeSlide].title}
-                  className="max-h-full max-w-full object-contain rounded-xl shadow-lg cursor-pointer"
-                  onClick={() => {
-                    sounds.playPop();
-                    setSelectedPhotoIndex(activeSlide);
-                  }}
+                  className="max-h-full max-w-full object-contain rounded-xl shadow-lg"
                 />
-                <div className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full bg-pink-500 text-white font-bold text-[10px] shadow-md">
-                  {memoryPhotos[activeSlide].dateTag}
-                </div>
               </div>
 
-              {/* Note Details Side */}
-              <div className="flex-1 text-left space-y-2 w-full">
+              <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-pink-400 tracking-wider uppercase">
-                    Memory {activeSlide + 1} of {memoryPhotos.length}
-                  </span>
-                  <span className="px-2 py-0.5 rounded-full bg-pink-500/20 border border-pink-500/40 text-pink-300 text-[10px] font-semibold">
-                    {memoryPhotos[activeSlide].badge}
+                  <h3 className="text-base sm:text-lg font-bold text-pink-200">
+                    {memoryPhotos[activeSlide].title}
+                  </h3>
+                  <span className="text-xs text-pink-300/70 font-semibold">
+                    {activeSlide + 1} / {memoryPhotos.length}
                   </span>
                 </div>
 
-                <h3 className="text-lg sm:text-xl font-bold text-pink-200">
-                  {memoryPhotos[activeSlide].title}
-                </h3>
-
-                <p className="text-xs text-pink-300/90 italic font-medium">
-                  "{memoryPhotos[activeSlide].subtitle}"
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  "{memoryPhotos[activeSlide].note}"
                 </p>
 
-                {/* Memory Note Box */}
-                <div className="p-2.5 sm:p-3 rounded-xl bg-slate-800/80 border border-pink-400/20 text-slate-200 font-sans text-xs leading-relaxed">
-                  <p>{memoryPhotos[activeSlide].note}</p>
-                </div>
-
-                {/* Controls */}
-                <div className="flex items-center justify-between pt-1">
-                  <div className="flex items-center gap-1.5">
+                <div className="pt-2 flex items-center justify-between border-t border-white/10">
+                  <div className="flex items-center gap-2">
                     <button
                       onClick={() => {
                         sounds.playPop();
